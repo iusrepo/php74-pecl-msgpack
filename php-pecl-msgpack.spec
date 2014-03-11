@@ -1,14 +1,22 @@
-%{!?php_inidir:  %{expand: %%global php_inidir  %{_sysconfdir}/php.d}}
-%{!?php_incldir: %{expand: %%global php_incldir %{_includedir}/php}}
-%{!?__pecl:      %{expand: %%global __pecl      %{_bindir}/pecl}}
+# spec file for php-pecl-msgpack
+#
+# Copyright (c) 2012-2014 Remi Collet
+# License: CC-BY-SA
+# http://creativecommons.org/licenses/by-sa/3.0/
+#
+# Please, preserve the changelog entries
+#
+%{!?php_inidir:  %global php_inidir   %{_sysconfdir}/php.d}
+%{!?__pecl:      %global __pecl       %{_bindir}/pecl}
+%{!?__php:       %global __php        %{_bindir}/php}
 
-%global with_zts    0%{?__ztsphp:1}
 %global pecl_name   msgpack
+%global with_zts    0%{?__ztsphp:1}
 
 Summary:       API for communicating with MessagePack serialization
 Name:          php-pecl-msgpack
 Version:       0.5.5
-Release:       4%{?dist}
+Release:       5%{?dist}
 License:       BSD
 Group:         Development/Languages
 URL:           http://pecl.php.net/package/msgpack
@@ -20,6 +28,8 @@ Patch0:        %{pecl_name}.patch
 BuildRequires: php-devel
 BuildRequires: php-pear
 BuildRequires: msgpack-devel
+# https://github.com/msgpack/msgpack-php/issues/25
+ExcludeArch: ppc64
 
 Requires(post): %{__pecl}
 Requires(postun): %{__pecl}
@@ -31,9 +41,11 @@ Provides:      php-%{pecl_name}%{?_isa} = %{version}
 Provides:      php-pecl(%{pecl_name}) = %{version}
 Provides:      php-pecl(%{pecl_name})%{?_isa} = %{version}
 
-# Filter private shared
+%if 0%{?fedora} < 20
+# Filter shared private
 %{?filter_provides_in: %filter_provides_in %{_libdir}/.*\.so$}
 %{?filter_setup}
+%endif
 
 
 %description
@@ -65,7 +77,8 @@ These are the files needed to compile programs using MessagePack serializer.
 %prep
 %setup -q -c 
 
-cd %{pecl_name}-%{version}
+mv %{pecl_name}-%{version} NTS
+cd NTS
 %patch0 -p1 -b .build
 
 # use system library
@@ -84,7 +97,7 @@ cd ..
 
 %if %{with_zts}
 # duplicate for ZTS build
-cp -pr %{pecl_name}-%{version} %{pecl_name}-zts
+cp -pr NTS ZTS
 %endif
 
 # Drop in the bit of configuration
@@ -101,13 +114,13 @@ EOF
 
 
 %build
-cd %{pecl_name}-%{version}
+cd NTS
 %{_bindir}/phpize
 %configure --with-php-config=%{_bindir}/php-config
 make %{?_smp_mflags}
 
 %if %{with_zts}
-cd ../%{pecl_name}-zts
+cd ../ZTS
 %{_bindir}/zts-phpize
 %configure --with-php-config=%{_bindir}/zts-php-config
 make %{?_smp_mflags}
@@ -116,21 +129,30 @@ make %{?_smp_mflags}
 
 %install
 # Install the NTS stuff
-make -C %{pecl_name}-%{version} install INSTALL_ROOT=%{buildroot}
+make -C NTS install INSTALL_ROOT=%{buildroot}
 install -D -m 644 %{pecl_name}.ini %{buildroot}%{php_inidir}/%{pecl_name}.ini
 
-# Install the ZTS stuff
 %if %{with_zts}
-make -C %{pecl_name}-zts install INSTALL_ROOT=%{buildroot}
+# Install the ZTS stuff
+make -C ZTS install INSTALL_ROOT=%{buildroot}
 install -D -m 644 %{pecl_name}.ini %{buildroot}%{php_ztsinidir}/%{pecl_name}.ini
 %endif
 
 # Install the package XML file
 install -D -m 644 package.xml %{buildroot}%{pecl_xmldir}/%{name}.xml
 
+# Test & Documentation
+cd NTS
+for i in $(grep 'role="test"' ../package.xml | sed -e 's/^.*name="//;s/".*$//')
+do install -Dpm 644 $i %{buildroot}%{pecl_testdir}/%{pecl_name}/$i
+done
+for i in $(grep 'role="doc"' ../package.xml | sed -e 's/^.*name="//;s/".*$//')
+do install -Dpm 644 $i %{buildroot}%{pecl_docdir}/%{pecl_name}/$i
+done
+
 
 %check
-cd %{pecl_name}-%{version}
+cd NTS
 
 TEST_PHP_EXECUTABLE=%{_bindir}/php \
 TEST_PHP_ARGS="-n -d extension_dir=$PWD/modules -d extension=%{pecl_name}.so" \
@@ -139,7 +161,7 @@ REPORT_EXIT_STATUS=1 \
 %{_bindir}/php -n run-tests.php
 
 %if %{with_zts}
-cd ../%{pecl_name}-zts
+cd ../ZTS
 
 TEST_PHP_EXECUTABLE=%{__ztsphp} \
 TEST_PHP_ARGS="-n -d extension_dir=$PWD/modules -d extension=%{pecl_name}.so" \
@@ -160,7 +182,7 @@ fi
 
 
 %files
-%doc %{pecl_name}-%{version}/{ChangeLog,CREDITS,LICENSE,README.md}
+%doc %{pecl_docdir}/%{pecl_name}
 %{pecl_xmldir}/%{name}.xml
 
 %config(noreplace) %{php_inidir}/%{pecl_name}.ini
@@ -173,6 +195,7 @@ fi
 
 
 %files devel
+%doc %{pecl_testdir}/%{pecl_name}
 %{php_incldir}/ext/%{pecl_name}
 
 %if %{with_zts}
@@ -181,6 +204,11 @@ fi
 
 
 %changelog
+* Tue Mar 11 2014 Remi Collet <remi@fedoraproject.org> - 0.5.5-5
+- cleanups
+- move doc in pecl_docdir
+- move tests in pecl_testdir (devel)
+
 * Sun Aug 04 2013 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 0.5.5-4
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_20_Mass_Rebuild
 
