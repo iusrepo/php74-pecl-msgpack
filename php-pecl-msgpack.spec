@@ -215,7 +215,7 @@ fi
 * Tue Apr  2 2013 Remi Collet <remi@fedoraproject.org> - 0.5.5-3
 - use system msgpack library headers
 
-* Wed Mar 26 2013 Remi Collet <remi@fedoraproject.org> - 0.5.5-2
+* Tue Mar 26 2013 Remi Collet <remi@fedoraproject.org> - 0.5.5-2
 - cleanups
 
 * Wed Feb 20 2013 Remi Collet <remi@fedoraproject.org> - 0.5.5-1
