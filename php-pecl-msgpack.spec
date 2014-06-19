@@ -12,7 +12,7 @@
 
 %global pecl_name   msgpack
 %global with_zts    0%{?__ztsphp:1}
-%if 0%{?fedora} < 21
+%if "%{php_version}" < "5.6"
 %global ini_name  %{pecl_name}.ini
 %else
 %global ini_name  40-%{pecl_name}.ini
@@ -21,7 +21,7 @@
 Summary:       API for communicating with MessagePack serialization
 Name:          php-pecl-msgpack
 Version:       0.5.5
-Release:       7%{?dist}
+Release:       8%{?dist}
 License:       BSD
 Group:         Development/Languages
 URL:           http://pecl.php.net/package/msgpack
@@ -209,6 +209,9 @@ fi
 
 
 %changelog
+* Thu Jun 19 2014 Remi Collet <rcollet@redhat.com> - 0.5.5-8
+- rebuild for https://fedoraproject.org/wiki/Changes/Php56
+
 * Sat Jun 07 2014 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 0.5.5-7
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_21_Mass_Rebuild
 
