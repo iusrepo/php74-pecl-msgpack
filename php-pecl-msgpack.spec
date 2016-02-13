@@ -1,29 +1,21 @@
 # Fedora spec file for php-pecl-msgpack
 #
-# Copyright (c) 2012-2015 Remi Collet
+# Copyright (c) 2012-2016 Remi Collet
 # License: CC-BY-SA
 # http://creativecommons.org/licenses/by-sa/4.0/
 #
 # Please, preserve the changelog entries
 #
-%{!?php_inidir:  %global php_inidir   %{_sysconfdir}/php.d}
-%{!?__pecl:      %global __pecl       %{_bindir}/pecl}
-%{!?__php:       %global __php        %{_bindir}/php}
-
 %global pecl_name   msgpack
 %global with_zts    0%{?__ztsphp:1}
-%if "%{php_version}" < "5.6"
-%global ini_name  %{pecl_name}.ini
-%else
 %global ini_name  40-%{pecl_name}.ini
-%endif
 # system library is outdated, and bundled library includes not yet released changes
 %global        with_msgpack 0
 
 Summary:       API for communicating with MessagePack serialization
 Name:          php-pecl-msgpack
 Version:       0.5.7
-Release:       2%{?dist}
+Release:       3%{?dist}
 License:       BSD
 Group:         Development/Languages
 URL:           http://pecl.php.net/package/msgpack
@@ -37,8 +29,6 @@ BuildRequires: msgpack-devel
 # https://github.com/msgpack/msgpack-php/issues/25
 ExcludeArch: ppc64
 
-Requires(post): %{__pecl}
-Requires(postun): %{__pecl}
 Requires:      php(zend-abi) = %{php_zend_api}
 Requires:      php(api) = %{php_core_api}
 
@@ -46,12 +36,6 @@ Provides:      php-%{pecl_name} = %{version}
 Provides:      php-%{pecl_name}%{?_isa} = %{version}
 Provides:      php-pecl(%{pecl_name}) = %{version}
 Provides:      php-pecl(%{pecl_name})%{?_isa} = %{version}
-
-%if 0%{?fedora} < 20 && 0%{?rhel} < 7
-# Filter shared private
-%{?filter_provides_in: %filter_provides_in %{_libdir}/.*\.so$}
-%{?filter_setup}
-%endif
 
 
 %description
@@ -192,16 +176,6 @@ REPORT_EXIT_STATUS=1 \
 %endif
 
 
-%post
-%{pecl_install} %{pecl_xmldir}/%{name}.xml >/dev/null || :
-
-
-%postun
-if [ $1 -eq 0 ] ; then
-    %{pecl_uninstall} %{pecl_name} >/dev/null || :
-fi
-
-
 %files
 %doc %{pecl_docdir}/%{pecl_name}
 %{pecl_xmldir}/%{name}.xml
@@ -225,6 +199,10 @@ fi
 
 
 %changelog
+* Sat Feb 13 2016 Remi Collet <remi@fedoraproject.org> - 0.5.7-3
+- drop scriptlets (replaced by file triggers in php-pear)
+- cleanup
+
 * Thu Feb 04 2016 Fedora Release Engineering <releng@fedoraproject.org> - 0.5.7-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_24_Mass_Rebuild
 
