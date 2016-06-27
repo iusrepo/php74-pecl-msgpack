@@ -14,14 +14,16 @@
 
 Summary:       API for communicating with MessagePack serialization
 Name:          php-pecl-msgpack
-Version:       0.5.7
-Release:       3%{?dist}
+Version:       2.0.1
+Release:       1%{?dist}
 License:       BSD
 Group:         Development/Languages
 URL:           http://pecl.php.net/package/msgpack
 Source:        http://pecl.php.net/get/%{pecl_name}-%{version}.tgz
 
-BuildRequires: php-devel
+Patch0:        %{pecl_name}-pr87.patch
+
+BuildRequires: php-devel > 7
 BuildRequires: php-pear
 %if %{with_msgpack}
 BuildRequires: msgpack-devel
@@ -68,6 +70,8 @@ These are the files needed to compile programs using MessagePack serializer.
 %setup -q -c 
 
 mv %{pecl_name}-%{version} NTS
+sed -e '/LICENSE/s/role="doc"/role="src"/' -i package.xml
+
 cd NTS
 
 %if %{with_msgpack}
@@ -101,7 +105,6 @@ extension = %{pecl_name}.so
 ;msgpack.error_display = On
 ;msgpack.illegal_key_insert = Off
 ;msgpack.php_only = On
-;msgpack.use_str8_serialization = On
 EOF
 
 
@@ -145,7 +148,10 @@ done
 
 %check
 # Known by upstream as failed test (travis result)
-rm */tests/{018,030,040,040b,040c,040d}.phpt
+rm */tests/041.phpt
+%ifnarch x86_64
+rm */tests/{040,040b,040d}.phpt
+%endif
 
 cd NTS
 : Minimal load test for NTS extension
@@ -177,6 +183,7 @@ REPORT_EXIT_STATUS=1 \
 
 
 %files
+%license NTS/LICENSE
 %doc %{pecl_docdir}/%{pecl_name}
 %{pecl_xmldir}/%{name}.xml
 
@@ -199,6 +206,11 @@ REPORT_EXIT_STATUS=1 \
 
 
 %changelog
+* Mon Jun 27 2016 Remi Collet <remi@fedoraproject.org> - 2.0.1-1
+- update to 2.0.1 (php 7, beta)
+- add patch for PHP 7.1
+  open https://github.com/msgpack/msgpack-php/pull/87
+
 * Sat Feb 13 2016 Remi Collet <remi@fedoraproject.org> - 0.5.7-3
 - drop scriptlets (replaced by file triggers in php-pear)
 - cleanup
