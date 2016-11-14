@@ -15,13 +15,16 @@
 Summary:       API for communicating with MessagePack serialization
 Name:          php-pecl-msgpack
 Version:       2.0.1
-Release:       1%{?dist}
+Release:       2%{?dist}
 License:       BSD
 Group:         Development/Languages
 URL:           http://pecl.php.net/package/msgpack
 Source:        http://pecl.php.net/get/%{pecl_name}-%{version}.tgz
 
 Patch0:        %{pecl_name}-pr87.patch
+# Temp for https://github.com/msgpack/msgpack-php/issues/100
+Patch1:        %{pecl_name}-php71.patch
+
 
 BuildRequires: php-devel > 7
 BuildRequires: php-pear
@@ -73,6 +76,8 @@ mv %{pecl_name}-%{version} NTS
 sed -e '/LICENSE/s/role="doc"/role="src"/' -i package.xml
 
 cd NTS
+%patch0 -p1 -b .pr87
+%patch1 -p1 -b .php71
 
 %if %{with_msgpack}
 # use system library
@@ -206,6 +211,10 @@ REPORT_EXIT_STATUS=1 \
 
 
 %changelog
+* Mon Nov 14 2016 Remi Collet <remi@fedoraproject.org> - 2.0.1-2
+- rebuild for https://fedoraproject.org/wiki/Changes/php71
+- add patch for PHP 7.1
+
 * Mon Jun 27 2016 Remi Collet <remi@fedoraproject.org> - 2.0.1-1
 - update to 2.0.1 (php 7, beta)
 - add patch for PHP 7.1
