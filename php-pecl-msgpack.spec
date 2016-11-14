@@ -154,9 +154,7 @@ done
 %check
 # Known by upstream as failed test (travis result)
 rm */tests/041.phpt
-%ifnarch x86_64
-rm */tests/{040,040b,040d}.phpt
-%endif
+rm */tests/040*.phpt
 
 cd NTS
 : Minimal load test for NTS extension
