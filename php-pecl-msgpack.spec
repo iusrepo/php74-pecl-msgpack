@@ -10,6 +10,7 @@
 %global with_zts    0%{?__ztsphp:1}
 %global ini_name  40-%{pecl_name}.ini
 # system library is outdated, and bundled library includes not yet released changes
+# e.g. missing template_callback_str in 1.4.1
 %global        with_msgpack 0
 
 Summary:       API for communicating with MessagePack serialization
@@ -25,6 +26,8 @@ BuildRequires: php-devel > 7
 BuildRequires: php-pear
 %if %{with_msgpack}
 BuildRequires: msgpack-devel
+%else
+Provides:      bundled(msgpack)
 %endif
 # https://github.com/msgpack/msgpack-php/issues/25
 ExcludeArch: ppc64
@@ -146,6 +149,8 @@ done
 %check
 # Erratic results
 rm */tests/034.phpt
+# Benchmark failing on slow arm builder
+rm */tests/035.phpt
 # Known by upstream as failed test (travis result)
 rm */tests/041.phpt
 rm */tests/040*.phpt
