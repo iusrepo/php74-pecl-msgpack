@@ -22,6 +22,8 @@ Group:         Development/Languages
 URL:           http://pecl.php.net/package/msgpack
 Source:        http://pecl.php.net/get/%{pecl_name}-%{version}.tgz
 
+Patch0:        %{pecl_name}-pr118.patch
+
 BuildRequires: php-devel > 7
 BuildRequires: php-pear
 %if %{with_msgpack}
@@ -74,6 +76,8 @@ mv %{pecl_name}-%{version} NTS
 sed -e '/LICENSE/s/role="doc"/role="src"/' -i package.xml
 
 cd NTS
+%patch0 -p1 -b .pr118
+
 %if %{with_msgpack}
 # use system library
 rm -rf msgpack

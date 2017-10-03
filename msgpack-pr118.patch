@@ -1,0 +1,31 @@
+From 99f9db8cd68cf458b330047b8d1cc0f15240abf2 Mon Sep 17 00:00:00 2001
+From: Remi Collet <remi@remirepo.net>
+Date: Fri, 14 Apr 2017 09:23:39 +0200
+Subject: [PATCH] use spl_autoload_register (to avoid deprecation warning with
+ 7.2)
+
+---
+ tests/019.phpt | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/tests/019.phpt b/tests/019.phpt
+index 46cccb3..693f5cf 100644
+--- a/tests/019.phpt
++++ b/tests/019.phpt
+@@ -17,7 +17,7 @@ function test($type, $variable, $test) {
+     echo $test || $unserialized->b == 2 ? 'OK' : 'ERROR', PHP_EOL;
+ }
+ 
+-function __autoload($classname) {
++function test_autoload($classname) {
+     class Obj {
+         var $a;
+         var $b;
+@@ -28,6 +28,7 @@ function __autoload($classname) {
+         }
+     }
+ }
++spl_autoload_register('test_autoload');
+ 
+ test('autoload', '83c0a34f626aa16101a16202', false);
+ ?>
