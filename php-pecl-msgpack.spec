@@ -16,7 +16,7 @@
 Summary:       API for communicating with MessagePack serialization
 Name:          php-pecl-msgpack
 Version:       2.0.2
-Release:       4%{?dist}
+Release:       5%{?dist}
 License:       BSD
 Group:         Development/Languages
 URL:           http://pecl.php.net/package/msgpack
@@ -208,6 +208,9 @@ REPORT_EXIT_STATUS=1 \
 
 
 %changelog
+* Tue Oct 03 2017 Remi Collet <remi@fedoraproject.org> - 2.0.2-5
+- rebuild for https://fedoraproject.org/wiki/Changes/php72
+
 * Thu Aug 03 2017 Fedora Release Engineering <releng@fedoraproject.org> - 2.0.2-4
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_27_Binutils_Mass_Rebuild
 
