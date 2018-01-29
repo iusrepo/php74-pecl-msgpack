@@ -1,11 +1,15 @@
 # Fedora spec file for php-pecl-msgpack
 #
-# Copyright (c) 2012-2016 Remi Collet
+# Copyright (c) 2012-2018 Remi Collet
 # License: CC-BY-SA
 # http://creativecommons.org/licenses/by-sa/4.0/
 #
 # Please, preserve the changelog entries
 #
+
+# we don't want -z defs linker flag
+%undefine _strict_symbol_defs_build
+
 %global pecl_name   msgpack
 %global with_zts    0%{?__ztsphp:1}
 %global ini_name  40-%{pecl_name}.ini
@@ -16,7 +20,7 @@
 Summary:       API for communicating with MessagePack serialization
 Name:          php-pecl-msgpack
 Version:       2.0.2
-Release:       5%{?dist}
+Release:       6%{?dist}
 License:       BSD
 Group:         Development/Languages
 URL:           http://pecl.php.net/package/msgpack
@@ -212,6 +216,9 @@ REPORT_EXIT_STATUS=1 \
 
 
 %changelog
+* Mon Jan 29 2018 Remi Collet <remi@remirepo.net> - 2.0.2-6
+- undefine _strict_symbol_defs_build
+
 * Tue Oct 03 2017 Remi Collet <remi@fedoraproject.org> - 2.0.2-5
 - rebuild for https://fedoraproject.org/wiki/Changes/php72
 
