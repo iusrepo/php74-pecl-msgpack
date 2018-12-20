@@ -10,11 +10,6 @@
 # we don't want -z defs linker flag
 %undefine _strict_symbol_defs_build
 
-%global gh_commit   943d27267fbf6da6b4d225f344f4731aec0c671b
-%global gh_short    %(c=%{gh_commit}; echo ${c:0:7})
-%global gh_owner    msgpack
-%global gh_project  msgpack-php
-%global gh_date     20171026
 %global pecl_name   msgpack
 %global with_zts    0%{?__ztsphp:1}
 %global ini_name  40-%{pecl_name}.ini
@@ -25,18 +20,12 @@
 Summary:       API for communicating with MessagePack serialization
 Name:          php-pecl-msgpack
 Version:       2.0.3
-%if 0%{?gh_date:1}
-Release:       0.1.%{gh_date}.%{gh_short}%{?dist}
-Source0:       https://github.com/%{gh_owner}/%{gh_project}/archive/%{gh_commit}/%{pecl_name}-%{version}-%{gh_short}.tar.gz
-%else
 Release:       1%{?dist}
 Source:        http://pecl.php.net/get/%{pecl_name}-%{version}.tgz
-%endif
 License:       BSD
 Group:         Development/Languages
 URL:           http://pecl.php.net/package/msgpack
 
-Patch1:        https://patch-diff.githubusercontent.com/raw/msgpack/msgpack-php/pull/124.patch
 Patch2:        https://patch-diff.githubusercontent.com/raw/msgpack/msgpack-php/pull/125.patch
 
 BuildRequires: php-devel > 7
@@ -86,18 +75,11 @@ These are the files needed to compile programs using MessagePack serializer.
 
 %prep
 %setup -qc
-%if 0%{?gh_date:1}
-mv %{gh_project}-%{gh_commit} NTS
-mv NTS/package.xml .
-sed -e '/release/s/0.5.6/%{version}%{?gh_date:dev}/' -i package.xml
-%else
 mv %{pecl_name}-%{version} NTS
-%endif
 
 sed -e '/LICENSE/s/role="doc"/role="src"/' -i package.xml
 
 cd NTS
-%patch1 -p1 -b .pr124
 %patch2 -p1 -b .pr125
 
 %if %{with_msgpack}
@@ -233,6 +215,9 @@ REPORT_EXIT_STATUS=0 \
 
 
 %changelog
+* Thu Dec 20 2018 Remi Collet <remi@remirepo.net> - 2.0.3-1
+- update to 2.0.3
+
 * Thu Oct 11 2018 Remi Collet <remi@remirepo.net> - 2.0.3-0.1.20171026.943d272
 - update to 2.0.3-dev for PHP 7.3 with patches from
   https://github.com/msgpack/msgpack-php/pull/124
