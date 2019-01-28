@@ -23,7 +23,6 @@ Version:       2.0.3
 Release:       1%{?dist}
 Source:        http://pecl.php.net/get/%{pecl_name}-%{version}.tgz
 License:       BSD
-Group:         Development/Languages
 URL:           http://pecl.php.net/package/msgpack
 
 Patch2:        https://patch-diff.githubusercontent.com/raw/msgpack/msgpack-php/pull/125.patch
@@ -65,7 +64,6 @@ This extension is still EXPERIMENTAL.
 
 %package devel
 Summary:       MessagePack developer files (header)
-Group:         Development/Libraries
 Requires:      php-pecl-%{pecl_name}%{?_isa} = %{version}-%{release}
 Requires:      php-devel%{?_isa}
 
