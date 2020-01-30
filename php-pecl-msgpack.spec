@@ -24,7 +24,7 @@
 Summary:       API for communicating with MessagePack serialization
 Name:          php-pecl-msgpack
 Version:       %{upstream_version}%{?upstream_lower:~%{upstream_lower}}
-Release:       1%{?dist}
+Release:       2%{?dist}
 Source:        https://pecl.php.net/get/%{pecl_name}-%{upstream_version}%{?upstream_prever}.tgz
 License:       BSD
 URL:           https://pecl.php.net/package/msgpack
@@ -209,6 +209,9 @@ REPORT_EXIT_STATUS=0 \
 
 
 %changelog
+* Thu Jan 30 2020 Fedora Release Engineering <releng@fedoraproject.org> - 2.1.0~beta1-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild
+
 * Fri Dec 20 2019 Remi Collet <remi@remirepo.net> - 2.1.0~beta1-1
 - update to 2.1.0beta1
 
