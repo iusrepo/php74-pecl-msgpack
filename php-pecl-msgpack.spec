@@ -1,6 +1,6 @@
 # Fedora spec file for php-pecl-msgpack
 #
-# Copyright (c) 2012-2019 Remi Collet
+# Copyright (c) 2012-2020 Remi Collet
 # License: CC-BY-SA
 # http://creativecommons.org/licenses/by-sa/4.0/
 #
@@ -11,8 +11,8 @@
 %undefine _strict_symbol_defs_build
 
 %global upstream_version 2.1.0
-%global upstream_prever  beta1
-%global upstream_lower   beta1
+#global upstream_prever  beta1
+#global upstream_lower   beta1
 
 %global pecl_name   msgpack
 %global with_zts    0%{?__ztsphp:1}
@@ -24,7 +24,7 @@
 Summary:       API for communicating with MessagePack serialization
 Name:          php-pecl-msgpack
 Version:       %{upstream_version}%{?upstream_lower:~%{upstream_lower}}
-Release:       2%{?dist}
+Release:       1%{?dist}
 Source:        https://pecl.php.net/get/%{pecl_name}-%{upstream_version}%{?upstream_prever}.tgz
 License:       BSD
 URL:           https://pecl.php.net/package/msgpack
@@ -209,6 +209,9 @@ REPORT_EXIT_STATUS=0 \
 
 
 %changelog
+* Mon Mar  2 2020 Remi Collet <remi@remirepo.net> - 2.1.0-1
+- update to 2.1.0
+
 * Thu Jan 30 2020 Fedora Release Engineering <releng@fedoraproject.org> - 2.1.0~beta1-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild
 
