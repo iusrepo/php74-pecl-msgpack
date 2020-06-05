@@ -1,3 +1,5 @@
+# IUS spec file for php74-pecl-msgpack, forked from:
+#
 # Fedora spec file for php-pecl-msgpack
 #
 # Copyright (c) 2012-2020 Remi Collet
@@ -14,6 +16,7 @@
 #global upstream_prever  beta1
 #global upstream_lower   beta1
 
+%global php         php74
 %global pecl_name   msgpack
 %global with_zts    0%{?__ztsphp:1}
 %global ini_name  40-%{pecl_name}.ini
@@ -22,7 +25,7 @@
 %global        with_msgpack 0
 
 Summary:       API for communicating with MessagePack serialization
-Name:          php-pecl-msgpack
+Name:          %{php}-pecl-msgpack
 Version:       %{upstream_version}%{?upstream_lower:~%{upstream_lower}}
 Release:       1%{?dist}
 Source:        https://pecl.php.net/get/%{pecl_name}-%{upstream_version}%{?upstream_prever}.tgz
@@ -31,6 +34,10 @@ URL:           https://pecl.php.net/package/msgpack
 
 BuildRequires: php-devel > 7
 BuildRequires: php-pear
+
+BuildRequires: %{php}-devel
+# build require pear1's dependencies to avoid mismatched php stacks
+BuildRequires: pear1 %{php}-cli %{php}-common %{php}-xml
 %if %{with_msgpack}
 BuildRequires: msgpack-devel
 %else
@@ -44,6 +51,11 @@ Provides:      php-%{pecl_name} = %{version}
 Provides:      php-%{pecl_name}%{?_isa} = %{version}
 Provides:      php-pecl(%{pecl_name}) = %{version}
 Provides:      php-pecl(%{pecl_name})%{?_isa} = %{version}
+
+# safe replacement
+Provides:      php-pecl-%{pecl_name} = %{version}-%{release}
+Provides:      php-pecl-%{pecl_name}%{?_isa} = %{version}-%{release}
+Conflicts:     php-pecl-%{pecl_name} < %{version}-%{release}
 
 
 %description
@@ -116,13 +128,13 @@ EOF
 cd NTS
 %{_bindir}/phpize
 %configure --with-php-config=%{_bindir}/php-config
-make %{?_smp_mflags}
+%make_build
 
 %if %{with_zts}
 cd ../ZTS
 %{_bindir}/zts-phpize
 %configure --with-php-config=%{_bindir}/zts-php-config
-make %{?_smp_mflags}
+%make_build
 %endif
 
 
@@ -138,7 +150,7 @@ install -D -m 644 %{ini_name} %{buildroot}%{php_ztsinidir}/%{ini_name}
 %endif
 
 # Install the package XML file
-install -D -m 644 package.xml %{buildroot}%{pecl_xmldir}/%{name}.xml
+install -D -m 644 package.xml %{buildroot}%{pecl_xmldir}/%{pecl_name}.xml
 
 # Test & Documentation
 cd NTS
@@ -185,10 +197,28 @@ REPORT_EXIT_STATUS=0 \
 %endif
 
 
+%triggerin -- pear1
+if [ -x %{__pecl} ]; then
+    %{pecl_install} %{pecl_xmldir}/%{pecl_name}.xml >/dev/null || :
+fi
+
+
+%posttrans
+if [ -x %{__pecl} ]; then
+    %{pecl_install} %{pecl_xmldir}/%{pecl_name}.xml >/dev/null || :
+fi
+
+
+%postun
+if [ $1 -eq 0 -a -x %{__pecl} ]; then
+    %{pecl_uninstall} %{pecl_name} >/dev/null || :
+fi
+
+
 %files
 %license NTS/LICENSE
 %doc %{pecl_docdir}/%{pecl_name}
-%{pecl_xmldir}/%{name}.xml
+%{pecl_xmldir}/%{pecl_name}.xml
 
 %config(noreplace) %{php_inidir}/%{ini_name}
 %{php_extdir}/%{pecl_name}.so
@@ -209,6 +239,9 @@ REPORT_EXIT_STATUS=0 \
 
 
 %changelog
+* Fri Jun 05 2020 David Alger <davidmalger@gmail.com> - 2.1.0-1
+- Port from Fedora to IUS
+
 * Mon Mar  2 2020 Remi Collet <remi@remirepo.net> - 2.1.0-1
 - update to 2.1.0
 
