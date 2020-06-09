@@ -37,7 +37,7 @@ BuildRequires: php-pear
 
 BuildRequires: %{php}-devel
 # build require pear1's dependencies to avoid mismatched php stacks
-BuildRequires: pear1 %{php}-cli %{php}-common %{php}-xml
+BuildRequires: pear1 %{php}-cli %{php}-common %{php}-xml %{php}-process
 %if %{with_msgpack}
 BuildRequires: msgpack-devel
 %else
