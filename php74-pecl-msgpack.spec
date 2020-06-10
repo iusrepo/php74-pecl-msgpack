@@ -32,12 +32,10 @@ Source:        https://pecl.php.net/get/%{pecl_name}-%{upstream_version}%{?upstr
 License:       BSD
 URL:           https://pecl.php.net/package/msgpack
 
-BuildRequires: php-devel > 7
-BuildRequires: php-pear
 
 BuildRequires: %{php}-devel
 # build require pear1's dependencies to avoid mismatched php stacks
-BuildRequires: pear1 %{php}-cli %{php}-common %{php}-xml %{php}-process
+BuildRequires: pear1 %{php}-cli %{php}-common %{php}-xml
 %if %{with_msgpack}
 BuildRequires: msgpack-devel
 %else
